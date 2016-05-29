@@ -3,7 +3,7 @@ sudo: false
 before_install:
   - source <(curl -SLs https://raw.githubusercontent.com/adafruit/travis-ci-arduino/master/install.sh)
 install:
-  - arduino --install-library "ArduinoJson, DNSServer, ESP8266, ESP8266WiFi, ESP8266WebServer, WiFiManager"
+  - arduino --install-library "ArduinoJson, WiFiManager"
 script:
   - build_main_platforms
 notifications:
