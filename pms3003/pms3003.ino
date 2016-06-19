@@ -27,6 +27,29 @@
 #define PMS_PIN_TX D6
 #define PMS_BAUDRATE 9600
 
+#define PMS_COMMAND1 0
+#define PMS_COMMAND2 1
+#define PMS_PM1C_HIGH 2
+#define PMS_PM1C_LOW 3
+#define PMS_PM25C_HIGH 4
+#define PMS_PM25C_LOW 5
+#define PMS_PM10C_HIGH 6
+#define PMS_PM10C_LOW 7
+#define PMS_PM1_HIGH 8
+#define PMS_PM1_LOW 9
+#define PMS_PM25_HIGH 10
+#define PMS_PM25_LOW 11
+#define PMS_PM10_HIGH 12
+#define PMS_PM10_LOW 13
+#define PMS_RES1_HIGH 14
+#define PMS_RES1_LOW 15
+#define PMS_RES2_HIGH 16
+#define PMS_RES2_LOW 17
+#define PMS_RES3_HIGH 18
+#define PMS_RES3_LOW 19
+#define PMS_CHECKSUM_HIGH 20
+#define PMS_CHECKSUM_LOW 21
+
 SoftwareSerial pms(PMS_PIN_RX, PMS_PIN_TX); // Initialize serial communiation with PMS 3003
 
 #define pmsDataLen 22
@@ -34,7 +57,6 @@ uint8_t buf[pmsDataLen];
 int idx = 0;
 int pm10 = 0;
 int pm25 = 0;
-int pm100 = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -66,18 +88,36 @@ void loop() { // run over and over
     buf[idx++] = pms.read();
   }
 
+  long pms_checksum = word(buf[PMS_CHECKSUM_HIGH], buf[PMS_CHECKSUM_LOW]);
+  long pms_calc_checksum = 0x42 + 0x4d + buf[PMS_COMMAND2] + buf[PMS_COMMAND1] + buf[PMS_PM1C_LOW] + buf[PMS_PM25C_LOW] + buf[PMS_PM10C_LOW] + buf[PMS_PM1_LOW] + buf[PMS_PM25_LOW] + buf[PMS_PM10_LOW] + buf[PMS_RES1_LOW] + buf[PMS_RES2_LOW] + buf[PMS_RES3_LOW] +
+                                   buf[PMS_PM1C_HIGH] + buf[PMS_PM25C_HIGH] + buf[PMS_PM10C_HIGH] + buf[PMS_PM1_HIGH] + buf[PMS_PM25_HIGH] + buf[PMS_PM10_HIGH] + buf[PMS_RES1_HIGH] + buf[PMS_RES2_HIGH] + buf[PMS_RES3_HIGH];
+
+  if (pms_calc_checksum == pms_checksum) {
+    Serial.print("Checksum correct: ");
+    Serial.print(pms_checksum);
+    Serial.print(" / ");
+    Serial.println(pms_calc_checksum);
+  }
+  else {
+    Serial.print("Checksum incorrect: ");
+    Serial.print(pms_checksum);
+    Serial.print(" / ");
+    Serial.println(pms_calc_checksum);
+    for (int i=0; i< pmsDataLen;i++) {
+      Serial.print(buf[i]);
+      Serial.print("..");
+    }
+    Serial.println();
+    }
+
   pm10 = ( buf[10] << 8 ) | buf[11];
   pm25 = ( buf[12] << 8 ) | buf[13];
-  pm100 = ( buf[14] << 8 ) | buf[15];
 
   Serial.print("pm2.5: ");
   Serial.print(pm25);
   Serial.print(" ug/m3   ");
   Serial.print("pm10: ");
   Serial.print(pm10);
-  Serial.print(" ug/m3   ");
-  Serial.print("pm100: ");
-  Serial.print(pm100);
-  Serial.println(" ug/m3");
-
+  Serial.println(" ug/m3   ");
+  delay(5000);
 }
