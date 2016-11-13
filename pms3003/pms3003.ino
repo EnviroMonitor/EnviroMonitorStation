@@ -1,15 +1,19 @@
 /*
- This example demonstrate how to read pm2.5 value on PMS 3003 air condition sensor
+This example demonstrate how to read pm1, pm2.5 and pm10 values from PMS 3003 air condition sensor.
+
+Inspired by:
+ https://github.com/brucetsao/eParticle/blob/master/PMS3003AirQualityforLinkIt/PMS3003AirQualityforLinkIt.ino and Dariusz Borowski code https://bitbucket.org/dariusz-borowski/obywatelski-monitoring-pylu
 
  PMS 3003 pin map is as follow:
     PIN1  :VCC, connect to 5V
-    PIN2  :GND
+    PIN2  :GND, connect to GND from power source
     PIN3  :SET, 0:Standby mode, 1:operating mode
     PIN4  :RXD :Serial RX
     PIN5  :TXD :Serial TX
     PIN6  :RESET
     PIN7  :NC
     PIN8  :NC
+
  Data format of PMS3003 is 24 one byte messages:
  Header 1
  Header 2
