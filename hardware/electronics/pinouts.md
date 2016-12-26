@@ -25,6 +25,8 @@
 
 ### Connector pins
 
+Front view of socket when air input fan is on top right.
+
 ```
 ----|
 | *   - NC
