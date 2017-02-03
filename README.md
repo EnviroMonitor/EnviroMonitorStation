@@ -25,7 +25,7 @@ Please stay tuned, this is work in progress. Prototypes are being tested and we 
 - DHT22 temp/humidity sensor (example: https://goo.gl/guQqyB)
 - 12V or 5V heat plate (example: https://goo.gl/Pexr5R)
 - DC-DC step down power supply module, preferably based on LM2596 (example: https://goo.gl/TbNs1Y)
-- AC power supply with 12V DC output (example: https://goo.gl/fVu5LT)
+- AC power supply with 12V DC 1A output (example: https://goo.gl/fVu5LT)
 - [PCB](https://github.com/EnviroMonitor/EnviroMonitorElectronics)
 - [enclosure](https://github.com/EnviroMonitor/EnviroMonitorEnclosure)
 
