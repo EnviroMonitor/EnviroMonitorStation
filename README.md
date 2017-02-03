@@ -21,14 +21,14 @@ Please stay tuned, this is work in progress. Prototypes are being tested and we 
 ## Bill of Materials
 Below is the list of parts you will need to build monitoring station:
 
-- Wemos D1 mini ESP8266 based development board
-- PMS3003 - Plantower particulate matter sensor detecting PM1.0, PM2.5, PM10
-- BME280 - barometric pressure, temperature and humidity sensor
-- Si7021 temperature and humidity sensors
-- DHT22 temperature and humidity sensors
-- 12V or 5V heat plate (example: http://bit.ly/2fLMI72)
-- DC-DC step down power supply module, preferably based on LM2596 (example: http://bit.ly/2fLQYTX)
-- AC power supply with 12V DC output
+- Wemos D1 mini ESP8266 based development board (example: https://goo.gl/nk0Xvn)
+- PMS3003 - Plantower particulate matter sensor detecting PM1.0, PM2.5, PM10 (example: https://goo.gl/ZB6P51)
+- BME280 - barometric pressure, temperature and humidity sensor (example: https://goo.gl/bCfaJp)
+- Si7021 temperature and humidity sensors (example: https://goo.gl/RCU0Vk)
+- DHT22 temperature and humidity sensors (example: https://goo.gl/guQqyB)
+- 12V or 5V heat plate (example: https://goo.gl/Pexr5R)
+- DC-DC step down power supply module, preferably based on LM2596 (example: https://goo.gl/TbNs1Y)
+- AC power supply with 12V DC output (example: https://goo.gl/fVu5LT)
 - [PCB](https://github.com/EnviroMonitor/EnviroMonitorElectronics)
 - [enclosure](https://github.com/EnviroMonitor/EnviroMonitorEnclosure)
 
