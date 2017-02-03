@@ -18,14 +18,14 @@ Please stay tuned, this is work in progress. Prototypes are being tested and we 
 # Hardware
 
 ## Bill of Materials
-- Wemos D1 mini ESP8266 based development board (example: http://bit.ly/ali_wemosd1mini)
-- PMS3003 - Plantower particulate matter sensor detecting PM1.0, PM2.5, PM10 (example: http://bit.ly/ali_pms3003)
-- BME280 - multisensor
-- Si7021 or DHT22 temp/humidity sensors
-- DS18B20 temp sensor
-- 12V or 5V heat plate (example: http://bit.ly/2fLMI72)
-- DC-DC step down power supply module, preferably based on LM2596 (example: http://bit.ly/2fLQYTX)
-- AC power supply with 12V DC output
+- Wemos D1 mini ESP8266 based development board (example: https://goo.gl/nk0Xvn)
+- PMS3003 - Plantower particulate matter sensor detecting PM1.0, PM2.5, PM10 (example: https://goo.gl/ZB6P51)
+- BME280 - multisensor (example: https://goo.gl/bCfaJp)
+- Si7021 temp/humidity sensor (example: https://goo.gl/RCU0Vk)
+- DHT22 temp/humidity sensor (example: https://goo.gl/guQqyB)
+- 12V or 5V heat plate (example: https://goo.gl/Pexr5R)
+- DC-DC step down power supply module, preferably based on LM2596 (example: https://goo.gl/TbNs1Y)
+- AC power supply with 12V DC output (example: https://goo.gl/fVu5LT)
 - [PCB](https://github.com/EnviroMonitor/EnviroMonitorElectronics)
 - [enclosure](https://github.com/EnviroMonitor/EnviroMonitorEnclosure)
 
