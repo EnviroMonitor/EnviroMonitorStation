@@ -18,7 +18,7 @@ Please stay tuned, this is work in progress. Prototypes are being tested and we 
 # Hardware
 
 ## Bill of Materials
-- Wemos D1 mini ESP8266 based development board (example: http://bit.ly/ali_wemosd1mini)
+- Wemos D1 mini ESP8266 based development board, an example: [Aliexpress](https://pl.aliexpress.com/item/D1-mini-Mini-NodeMcu-4M-bytes-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266/32529101036.html?spm=2114.13010208.99999999.278.MMIp1C)
 - PMS3003 - Plantower particulate matter sensor detecting PM1.0, PM2.5, PM10 (example: http://bit.ly/ali_pms3003)
 - BME280 - multisensor
 - Si7021 or DHT22 temp/humidity sensors
