@@ -37,5 +37,4 @@ install:
   - pip install -U platformio
 
 script:
-  - cd EnviroMonitorStation
   - platformio run
