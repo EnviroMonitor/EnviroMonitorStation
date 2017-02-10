@@ -1,3 +1,6 @@
+#include <Arduino.h>
+
+/*
 ####################################################
 # EnviroMonitor.ino
 # Part of EnviroMonitor project
@@ -5,6 +8,7 @@
 # OpenSource Air Quality Monitoring Solution
 # Copyright © 2016 by EnviroMonitor
 ####################################################
+*/
 
 #include <FS.h>
 #include <ESP8266WiFi.h>
@@ -14,12 +18,13 @@
 
 #include <ArduinoJson.h>
 
+//set debug mode, use only in testing
 #define DEBUG_MODE    true
 
 #define HW  0001
 #define SW  0001
 
-# Wemos PIN definitions
+//# Wemos PIN definitions
 #define PMS_SET
 #define PMS_RST
 #define PMS_RXD
@@ -27,20 +32,32 @@
 #define PMS_SET
 #define PMS_SET
 
+String getMacAddress() {
+  byte mac[6];
+  WiFi.macAddress(mac);
+  String cMac = "";
 
-###############################################
-# start WiFi AutoConfiguration
+  for (int i = 0; i < 6; ++i) {
+    if (mac[i]<0x10) {cMac += "0";}
+    cMac += String(mac[i],HEX);
+    if (i<5)
+      cMac += ""; // put : or - if you want byte delimiters
+    }
+
+  cMac.toUpperCase();
+  return cMac;
+  }
+
+//###############################################
+//# start WiFi AutoConfiguration
 
 //define your default values here, if there are different values in config.json, they are overwritten.
-//char station_id[40]; //monitoring device ID, used for identification
+String station_id = getMacAddress(); //monitoring device ID, used for identification
 char api_endpoint[129] = "http://air-monitor.org/api/v1/"; //air monitoring API URL, default value
 char ota_server[129] = "http://air-monitor.org/ota/v1/"; //OTA update server address
 
 //flag for saving data
 bool shouldSaveConfig = true;
-
-//set debug mode, use only in testing
-bool debugMode = false;
 
 //callback notifying us of the need to save config
 void saveConfigCallback () {
@@ -48,44 +65,45 @@ void saveConfigCallback () {
   shouldSaveConfig = true;
 }
 
-# end WiFi AutoConfiguration 
+//# end WiFi AutoConfiguration
 
-###############################################
-# begin OTA updates
+//###############################################
+//# begin OTA updates
 
-# end OTA updates
+//# end OTA updates
 
-###############################################
-# begin PMS3003
+//###############################################
+//# begin PMS3003
 
-# end PMS3003
+//# end PMS3003
 
-###############################################
-# begin BME280
+//###############################################
+//# begin BME280
 
-# end BMWE280
+//# end BMWE280
 
-###############################################
-# begin DHT22
+//###############################################
+//# begin DHT22
 
-# end DHT22
+//# end DHT22
 
-###############################################
-# start Si7021
+//###############################################
+//# start Si7021
 
-# end Si7021
+//# end Si7021
 
-###############################################
-# begin DS18B29
+//###############################################
+//# begin DS18B29
 
-# end DS18B29
+//# end DS18B29
 
 void setup() {
   Serial.begin(115200);
   Serial.println();
 
   //clean FS in debug mode
-  if debugMode {
+  if (DEBUG_MODE == true) {
+    Serial.println("*DEBUG MODE ON: formatting SPIFFS");
     SPIFFS.format();
   }
 
@@ -111,9 +129,9 @@ void setup() {
         if (json.success()) {
           Serial.println("\nparsed json");
 
-          strcpy(device_id, json["station_id"]);
+          //strcpy(station_id, json["station_id"]);
           strcpy(api_endpoint, json["api_endpoint"]);
-          strcpy(ota_server, jsno["ota_server"]);
+          strcpy(ota_server, json["ota_server"]);
 
         } else {
           Serial.println("failed to load json config");
@@ -130,7 +148,7 @@ void setup() {
   // The extra parameters to be configured (can be either global or just in the setup)
   // After connecting, parameter.getValue() will get you the configured value
   // id/name placeholder/prompt default length
-  WiFiManagerParameter custom_station_id("station_id", "Monitoring station ID", station_id, 40);
+  //WiFiManagerParameter custom_station_id("station_id", "Monitoring station ID", station_id, 40);
   WiFiManagerParameter custom_api_endpoint("api_endpoint", "API endpoint", api_endpoint, 129);
   WiFiManagerParameter custom_ota_server("ota_server", "OTA update server address", ota_server, 129);
 
@@ -140,9 +158,9 @@ void setup() {
 
   //set config save notify callback
   wifiManager.setSaveConfigCallback(saveConfigCallback);
-  
+
   //add all your parameters here
-  wifiManager.addParameter(&custom_device_id);
+  //wifiManager.addParameter(&custom_station_id);
   wifiManager.addParameter(&custom_api_endpoint);
   wifiManager.addParameter(&custom_ota_server);
 
@@ -152,7 +170,7 @@ void setup() {
   //set minimu quality of signal so it ignores AP's under that quality
   //defaults to 8%
   //wifiManager.setMinimumSignalQuality();
-  
+
   //sets timeout until configuration portal gets turned off
   //useful to make it all retry or go to sleep
   //in seconds
@@ -162,7 +180,7 @@ void setup() {
   //if it does not connect it starts an access point with the specified name
   //here  "AutoConnectAP"
   //and goes into a blocking loop awaiting configuration
-  if (!wifiManager.autoConnect("AutoConnectAP", "password")) {
+  if (!wifiManager.autoConnect("Smogly Air Quality Monitor")) {
     Serial.println("failed to connect and hit timeout");
     delay(3000);
     //reset and try again, or maybe put it to deep sleep
@@ -174,7 +192,7 @@ void setup() {
   Serial.println("Successfully connected to WiFi network");
 
   //read updated parameters
-  strcpy(station_id, custom_station_id.getValue());
+  //strcpy(station_id, custom_station_id.getValue());
   strcpy(api_endpoint, custom_api_endpoint.getValue());
   strcpy(ota_server, custom_ota_server.getValue());
 
@@ -183,7 +201,7 @@ void setup() {
     Serial.println("saving config");
     DynamicJsonBuffer jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
-    json["station_id"] = station_id;
+    //json["station_id"] = station_id;
     json["api_endpoint"] = api_endpoint;
     json["ota_server"] = ota_server;
 

@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 /*
 This example demonstrate how to read pm1, pm2.5 and pm10 values from PMS 3003 air condition sensor.
 
@@ -39,7 +41,7 @@ Inspired by:
  Reserved 4 low
  Checksum high - sum of 9 previous readings
  Checksum low
- 
+
 
  In this example, we only use Serial to get PM 2.5 value.
 
@@ -52,12 +54,15 @@ Inspired by:
 
 #include <SoftwareSerial.h>
 
+#define DEBUG true
+
 #define PMS_PIN_SET D5
-#define PMS_PIN_RX D7
-#define PMS_PIN_TX D6
+#define PMS_PIN_RX D6
+#define PMS_PIN_TX D7
+#define PMS_PIN_RST D8
 #define PMS_BAUDRATE 9600
 
-// Data format
+// PMS3003 Data format
 #define PMS_HEADER1 0 //0x42
 #define PMS_HEADER2 1 // 0x4d
 #define PMS_COMMAND1 2 // frame lenght high
@@ -126,15 +131,15 @@ void loop() { // run over and over
     buf[idx++] = pms.read();
   }
   long pms_checksum = word(buf[PMS_CHECKSUM_HIGH], buf[PMS_CHECKSUM_LOW]);
-  long pms_calc_checksum = buf[PMS_HEADER1] + buf[PMS_HEADER2] + 
-                            buf[PMS_COMMAND1] + buf[PMS_COMMAND2] + 
-                            buf[PMS_PM1C_HIGH] + buf[PMS_PM1C_LOW] + 
-                            buf[PMS_PM25C_HIGH] + buf[PMS_PM25C_LOW] + 
-                            buf[PMS_PM10C_HIGH] + buf[PMS_PM10C_LOW] + 
-                            buf[PMS_PM1_HIGH] + buf[PMS_PM1_LOW] + 
-                            buf[PMS_PM25_HIGH] + buf[PMS_PM25_LOW] + 
-                            buf[PMS_PM10_HIGH] + buf[PMS_PM10_LOW] + 
-                            buf[PMS_RES1_HIGH] + buf[PMS_RES1_LOW] + 
+  long pms_calc_checksum = buf[PMS_HEADER1] + buf[PMS_HEADER2] +
+                            buf[PMS_COMMAND1] + buf[PMS_COMMAND2] +
+                            buf[PMS_PM1C_HIGH] + buf[PMS_PM1C_LOW] +
+                            buf[PMS_PM25C_HIGH] + buf[PMS_PM25C_LOW] +
+                            buf[PMS_PM10C_HIGH] + buf[PMS_PM10C_LOW] +
+                            buf[PMS_PM1_HIGH] + buf[PMS_PM1_LOW] +
+                            buf[PMS_PM25_HIGH] + buf[PMS_PM25_LOW] +
+                            buf[PMS_PM10_HIGH] + buf[PMS_PM10_LOW] +
+                            buf[PMS_RES1_HIGH] + buf[PMS_RES1_LOW] +
                             buf[PMS_RES2_HIGH] + buf[PMS_RES2_LOW] +
                             buf[PMS_RES3_HIGH] + buf[PMS_RES3_LOW];
 
@@ -150,17 +155,20 @@ void loop() { // run over and over
     Serial.print(pms_checksum);
     Serial.print(" / ");
     Serial.println(pms_calc_checksum);
-    Serial.println("Raw data dump:");
-    for (int i=0; i< pmsDataLen;i++) {
-      Serial.print(buf[i]);
-      Serial.print(" ");
+
+    if DEBUG {
+      Serial.println("Raw data dump:");
+      for (int i=0; i< pmsDataLen;i++) {
+        Serial.print(buf[i]);
+        Serial.print(" ");
+      }
     }
     Serial.println();
     }
 
   pm25 = word(buf[12], buf[13]);
   pm10 = word(buf[14], buf[15]);
- 
+
   Serial.print("pm2.5: ");
   Serial.print(pm25);
   Serial.print(" pm10: ");

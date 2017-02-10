@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 //based on:
 // Adafruit Adafruit_BME280_Library
 // https://github.com/adafruit/Adafruit_BME280_Library
