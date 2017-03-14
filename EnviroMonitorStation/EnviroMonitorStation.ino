@@ -17,6 +17,7 @@
 #include <WiFiManager.h>
 
 #include <ArduinoJson.h>
+#include <ESP8266HTTPClient.h>
 
 //set debug mode, use only in testing
 #define DEBUG_MODE    true
@@ -218,6 +219,31 @@ void setup() {
 
   Serial.println("local ip");
   Serial.println(WiFi.localIP());
+
+  StaticJsonBuffer<200> jsonBuffer;
+
+  JsonObject& root = jsonBuffer.createObject();
+  root["pm01"] = "10";
+  root["pm25"] = "5";
+  root["pm10"] = "3";
+  root["temp_out1"] = "10";
+  root["temp_out2"] = "11";
+  root["temp_out3"] = "12";
+  root["temp_int_air1"] = "12";
+  root["hum_out1"] = "21";
+  root["hum_out2"] = "22";
+  root["hum_out3"] = "23";
+  root["hum_int_air1"] = "23";
+  root["rssi"] = "123";
+  root["bpress_out1"] = "24";
+  root.printTo(Serial);
+  String output;
+  root.printTo(output);
+  HTTPClient http;
+  http.begin("http://requestb.in/1kgzrx51");
+  http.addHeader("Content-Type", "application/json");
+  http.POST(output);
+  http.end();
 
 }
 
