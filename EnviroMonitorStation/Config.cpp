@@ -11,7 +11,7 @@ void Config::mount()
 }
 
 void Config::read(const char* fileName) {
-  apiEndpoint = "http://app.smogly.pl/api/v1/";
+  apiEndpoint = "http://app.smogly.pl/api/v1/station/cef6960f-6627-4c4f-9080-de6bbea41a7e/add-metering/?token=9539f7d1-d633-4838-81cb-6f8c712c6ad0";
 
   if (!SPIFFS.exists(fileName)) {
     Serial.println("Cannot find config file");
