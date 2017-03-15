@@ -31,7 +31,7 @@ Below is the list of parts you will need to build monitoring station:
 - AC power supply with 12V DC 1A output (example: https://goo.gl/fVu5LT)
 - N-MOSFET, example: AUIRLZ44Z
 - 2.54 pitch male pin headers: 2 x 8 pins (Wemos connectors, usually included with Wemos), 1 x 6 pins (PMS3003 connector), 3 x 3 pins (DS, DHT and HEAT DC switch), 1 x 4 pins (I2C bus)
-- 2.54 ptich female pin headers: 2 x 8 pins for wemos socket
+- 2.54 ptich female pin headers: 2 x 8 pins for wemos socket, 1 x 6 pin (to solder instead of original PMS3003 plug)
 - 3 x 3.5 mm pitch 2 pin screw terminals
 - resistors: 1 x 4.7 kΩ, 1 x 47 kΩ, 1 x 1 kΩ
 - [PCB](https://github.com/EnviroMonitor/EnviroMonitorElectronics)
