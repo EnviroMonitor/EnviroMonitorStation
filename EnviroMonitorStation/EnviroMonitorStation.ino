@@ -111,7 +111,7 @@ void loop() {
 
 String createPayload()
 {
-  StaticJsonBuffer<200> jsonBuffer;
+  StaticJsonBuffer<300> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   root["pm01"] = "10";
   root["pm25"] = "5";
@@ -128,5 +128,6 @@ String createPayload()
   root["bpress_out1"] = "24";
   String output;
   root.printTo(output);
+  Serial.println(output);
   return output;
 }
