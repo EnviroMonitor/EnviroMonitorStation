@@ -21,6 +21,7 @@
 
 //set debug mode, use only in testing
 #define DEBUG_MODE    true
+#define TIME_BETWEEN_METERINGS 15000
 
 //# Wemos PIN definitions
 #define PMS_SET
@@ -69,10 +70,11 @@ void setup() {
     config.reset();
   }
 
-  config.read("/config.json");
   strcpy(apiEndpoint, config.apiEndpoint);
+  
+  config.read("/config.json");
 
-  WiFiManagerParameter custom_apiEndpoint("apiEndpoint", "API endpoint", apiEndpoint, 129);
+  WiFiManagerParameter custom_apiEndpoint("apiEndpoint", "API endpoint", config.apiEndpoint, 129);
 
   WiFiManager wifiManager;
   wifiManager.addParameter(&custom_apiEndpoint);
@@ -86,6 +88,7 @@ void setup() {
     ESP.reset();
     delay(5000);
   }
+
 
   //if you get here you have connected to the WiFi
   Serial.println("Successfully connected to WiFi network");
@@ -106,7 +109,7 @@ void loop() {
     http.addHeader("Content-Type", "application/json");
     http.POST(output);
     http.end();
-    delay(4000);
+    delay(TIME_BETWEEN_METERINGS);
 }
 
 String createPayload()
