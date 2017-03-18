@@ -18,6 +18,7 @@
 #include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 #include "Config.h"
+#include "SmoglyDHT.h"
 
 //set debug mode, use only in testing
 #define DEBUG_MODE    true
@@ -32,6 +33,8 @@
 #define PMS_SET
 
 char apiEndpoint[129] = "http://air-monitor.org/api/v1/"; //air monitoring API URL, default value
+
+SmoglyDHT dht;
 
 //###############################################
 //# begin PMS3003
@@ -71,7 +74,7 @@ void setup() {
   }
 
   strcpy(apiEndpoint, config.apiEndpoint);
-  
+
   config.read("/config.json");
 
   WiFiManagerParameter custom_apiEndpoint("apiEndpoint", "API endpoint", config.apiEndpoint, 129);
@@ -100,6 +103,8 @@ void setup() {
 
   Serial.print("Local IP set to: ");
   Serial.println(WiFi.localIP());
+  Serial.println("Initializing DHT");
+  dht.setup();
 }
 
 void loop() {
@@ -109,6 +114,8 @@ void loop() {
     http.addHeader("Content-Type", "application/json");
     http.POST(output);
     http.end();
+    Serial.println(dht.readTemperature());
+    Serial.println(dht.readHumidity());
     delay(TIME_BETWEEN_METERINGS);
 }
 
