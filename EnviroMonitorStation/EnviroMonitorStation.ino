@@ -22,7 +22,7 @@
 
 //set debug mode, use only in testing
 #define DEBUG_MODE    true
-#define TIME_BETWEEN_METERINGS 15000
+#define TIME_BETWEEN_METERINGS 2000
 
 //# Wemos PIN definitions
 #define PMS_SET
@@ -92,7 +92,6 @@ void setup() {
     delay(5000);
   }
 
-
   //if you get here you have connected to the WiFi
   Serial.println("Successfully connected to WiFi network");
 
@@ -114,9 +113,28 @@ void loop() {
     http.addHeader("Content-Type", "application/json");
     http.POST(output);
     http.end();
-    Serial.println(dht.readTemperature());
-    Serial.println(dht.readHumidity());
+
+    // Wait a few seconds between measurements.
     delay(TIME_BETWEEN_METERINGS);
+
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    float h = dht.readHumidity();
+    // Read temperature as Celsius (the default)
+    float t = dht.readTemperature();
+
+    // Check if any reads failed and exit early (to try again).
+    if (isnan(h) || isnan(t)) {
+      Serial.println("Failed to read from DHT sensor!");
+      return;
+    }
+
+    Serial.print("Humidity: ");
+    Serial.print(h);
+    Serial.print(" %\t");
+    Serial.print("Temperature: ");
+    Serial.print(t);
+    Serial.print(" *C\n");
 }
 
 String createPayload()
@@ -138,6 +156,5 @@ String createPayload()
   root["bpress_out1"] = "24";
   String output;
   root.printTo(output);
-  Serial.println(output);
   return output;
 }
