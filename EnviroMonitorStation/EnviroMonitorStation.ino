@@ -19,6 +19,7 @@
 #include <ESP8266HTTPClient.h>
 #include "Config.h"
 #include "SmoglyDHT.h"
+#include "PMS3003.h"
 
 //set debug mode, use only in testing
 #define DEBUG_MODE    true
@@ -32,41 +33,16 @@
 #define PMS_SET
 #define PMS_SET
 
-char apiEndpoint[200] = "http://app.smogly.pl/api/v1/station/cef6960f-6627-4c4f-9080-de6bbea41a7e/add-metering/?token=9539f7d1-d633-4838-81cb-6f8c712c6ad0"; //air monitoring API URL, default value
+char apiEndpoint[130] = "http://app.smogly.pl/api/v1/station/cef6960f-6627-4c4f-9080-de6bbea41a7e/add-metering/?token=9539f7d1-d633-4838-81cb-6f8c712c6ad0"; //air monitoring API URL, default value
 
 SmoglyDHT dht;
-
-//###############################################
-//# begin PMS3003
-
-//# end PMS3003
-
-//###############################################
-//# begin BME280
-
-//# end BMWE280
-
-//###############################################
-//# begin DHT22
-
-//# end DHT22
-
-//###############################################
-//# start Si7021
-
-//# end Si7021
-
-//###############################################
-//# begin DS18B29
-
-//# end DS18B29
+PMS3003 pms;
 
 void setup() {
   Serial.begin(115200);
   Serial.println();
 
   Config config;
-
   config.mount();
 
   if (DEBUG_MODE) {
@@ -77,7 +53,7 @@ void setup() {
 
   config.read("/config.json");
 
-  WiFiManagerParameter custom_apiEndpoint("apiEndpoint", "API endpoint", config.apiEndpoint, 200);
+  WiFiManagerParameter custom_apiEndpoint("apiEndpoint", "API endpoint", apiEndpoint, 130);
 
   WiFiManager wifiManager;
   wifiManager.addParameter(&custom_apiEndpoint);
@@ -96,7 +72,7 @@ void setup() {
   Serial.println("Successfully connected to WiFi network");
 
   //read updated parameters
-  strcpy(config.apiEndpoint, custom_apiEndpoint.getValue());
+  //strcpy(config.apiEndpoint, custom_apiEndpoint.getValue());
 
   config.save("/config.json");
 
@@ -104,17 +80,21 @@ void setup() {
   Serial.println(WiFi.localIP());
   Serial.println("Initializing DHT");
   dht.setup();
+  Serial.println("Initializing PMS");
+  pms.init();
+  delay(TIME_BETWEEN_METERINGS);
 }
 
 void loop() {
-    // Wait a few seconds between measurements.
-    delay(TIME_BETWEEN_METERINGS);
-
     // Reading temperature or humidity takes about 250 milliseconds!
     // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
     float h = dht.readHumidity();
     // Read temperature as Celsius (the default)
     float t = dht.readTemperature();
+
+    pms.read();
+    long pm25 = pms.pm25;
+    long pm10 = pms.pm10;
 
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t)) {
@@ -122,40 +102,33 @@ void loop() {
       return;
     }
 
-    String output = createPayload(h,t);
+    String output = createPayload(h,t, pm25, pm10);
     HTTPClient http;
-    http.begin(apiEndpoint);
-    Serial.print(apiEndpoint);
+    http.begin("http://app.smogly.pl/api/v1/station/cef6960f-6627-4c4f-9080-de6bbea41a7e/add-metering/?token=9539f7d1-d633-4838-81cb-6f8c712c6ad0");
     http.addHeader("Content-Type", "application/json");
     http.POST(output);
-    Serial.print(output);
     http.end();
-
-    Serial.print("Humidity: ");
-    Serial.print(h);
-    Serial.print(" %\t");
-    Serial.print("Temperature: ");
-    Serial.print(t);
-    Serial.print(" *C\n");
+    // Wait a few seconds between measurements.
+    delay(TIME_BETWEEN_METERINGS);
 }
 
-String createPayload(float h, float t)
+String createPayload(float h, float t, long pm25, long pm10)
 {
   StaticJsonBuffer<300> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
-  root["pm01"] = "10";
-  root["pm25"] = "5";
-  root["pm10"] = "3";
+  root["pm01"] = "0";
+  root["pm25"] = pm25;
+  root["pm10"] = pm10;
   root["temp_out1"] = t;
-  root["temp_out2"] = "11";
-  root["temp_out3"] = "12";
-  root["temp_int_air1"] = "12";
+  root["temp_out2"] = "0";
+  root["temp_out3"] = "0";
+  root["temp_int_air1"] = "0";
   root["hum_out1"] = h;
-  root["hum_out2"] = "22";
-  root["hum_out3"] = "23";
-  root["hum_int_air1"] = "23";
-  root["rssi"] = "123";
-  root["bpress_out1"] = "24";
+  root["hum_out2"] = "0";
+  root["hum_out3"] = "0";
+  root["hum_int_air1"] = "0";
+  root["rssi"] = "0";
+  root["bpress_out1"] = "0";
   String output;
   root.printTo(output);
   return output;
