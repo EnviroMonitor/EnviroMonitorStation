@@ -85,15 +85,14 @@ Inspired by:
 #define PMS_CHECKSUM_HIGH 22
 #define PMS_CHECKSUM_LOW 23
 
-SoftwareSerial pms(PMS_PIN_RX, PMS_PIN_TX); // Initialize serial communiation with PMS 3003
+SoftwareSerial localPms(PMS_PIN_RX, PMS_PIN_TX); // Initialize serial communiation with PMS 3003
 
-#define pmsDataLen 24 // according to spec PMS3003 has 24 bytes long message
-uint8_t buf[pmsDataLen];
+#define localPmsDataLen 24 // according to spec PMS3003 has 24 bytes long message
+uint8_t buf[localPmsDataLen];
 int idx = 0;
 
 void PMS3003::init() {
-  Serial.begin(115200);
-  pms.begin(PMS_BAUDRATE); // PMS 3003 UART has baud rate 9600
+  localPms.begin(PMS_BAUDRATE); // PMS 3003 UART has baud rate 9600
   pinMode(PMS_PIN_SET, OUTPUT);
   digitalWrite(PMS_PIN_SET, HIGH);
 }
@@ -101,32 +100,34 @@ void PMS3003::init() {
 void PMS3003::read() {
   uint8_t c = 0;
   idx = 0;
-  memset(buf, 0, pmsDataLen);
+  memset(buf, 0, localPmsDataLen);
 
-  //digitalWrite(PMS_PIN_SET, HIGH);
   delay(1000);
 
   while (true) {
     while (c != 0x42) {
-      while (!pms.available());
-      c = pms.read();
+      while (!localPms.available());
+      c = localPms.read();
     }
-    while (!pms.available());
-    c = pms.read();
+    while (!localPms.available());
+    c = localPms.read();
     if (c == 0x4d) {
-      // now we got a correct header)
       buf[idx++] = 0x42;
       buf[idx++] = 0x4d;
       break;
     }
   }
 
-  while (idx != pmsDataLen) {
-    while(!pms.available());
-    buf[idx++] = pms.read();
+  while (idx != localPmsDataLen) {
+    while(!localPms.available());
+    buf[idx++] = localPms.read();
   }
-  long pms_checksum = word(buf[PMS_CHECKSUM_HIGH], buf[PMS_CHECKSUM_LOW]);
-  long pms_calc_checksum = buf[PMS_HEADER1] + buf[PMS_HEADER2] +
+  while (idx != localPmsDataLen) {
+    while(!localPms.available());
+    buf[idx++] = localPms.read();
+  }
+  long localPms_checksum = word(buf[PMS_CHECKSUM_HIGH], buf[PMS_CHECKSUM_LOW]);
+  long localPms_calc_checksum = buf[PMS_HEADER1] + buf[PMS_HEADER2] +
                             buf[PMS_COMMAND1] + buf[PMS_COMMAND2] +
                             buf[PMS_PM1C_HIGH] + buf[PMS_PM1C_LOW] +
                             buf[PMS_PM25C_HIGH] + buf[PMS_PM25C_LOW] +
@@ -139,6 +140,8 @@ void PMS3003::read() {
                             buf[PMS_RES3_HIGH] + buf[PMS_RES3_LOW];
 
 
-  pm25 = word(buf[12], buf[13]);
-  pm10 = word(buf[14], buf[15]);
+  if (localPms_calc_checksum == localPms_checksum) {
+    pm25 = word(buf[12], buf[13]);
+    pm10 = word(buf[14], buf[15]);
+  }
 }
