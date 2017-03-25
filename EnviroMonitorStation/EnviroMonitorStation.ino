@@ -12,7 +12,7 @@
 
 #include <ESP8266WiFi.h>
 #include <DNSServer.h>
-#include <ESP8266WebServer.h>
+#include <ESP8266WebServer.h>00
 #include <WiFiManager.h>
 
 #include <ArduinoJson.h>
@@ -32,6 +32,9 @@
 #define PMS_TXD
 #define PMS_SET
 #define PMS_SET
+#define HEAT_PIN_SWITCH D4
+
+float target_temp = 30.0;
 
 char apiEndpoint[130] = "http://app.smogly.pl/api/v1/station/cef6960f-6627-4c4f-9080-de6bbea41a7e/add-metering/?token=9539f7d1-d633-4838-81cb-6f8c712c6ad0"; //air monitoring API URL, default value
 
@@ -48,6 +51,9 @@ void setup() {
   if (DEBUG_MODE) {
     config.reset();
   }
+
+  pinMode(HEAT_PIN_SWITCH, OUTPUT);
+  digitalWrite(HEAT_PIN_SWITCH, HIGH);
 
   strcpy(apiEndpoint, config.apiEndpoint);
 
@@ -100,6 +106,17 @@ void loop() {
     if (isnan(h) || isnan(t)) {
       Serial.println("Failed to read from DHT sensor!");
       return;
+    }
+
+    if (t >= target_temp) // we're going to measure humidity instaead temp
+    {
+      digitalWrite(HEAT_PIN_SWITCH, LOW);
+      Serial.print(t);
+      Serial.print("\tHeater OFF\n");
+    } else {
+      digitalWrite(HEAT_PIN_SWITCH, HIGH);
+      Serial.print(t);
+      Serial.print("\tHeater ON\n");
     }
 
     String output = createPayload(h,t, pm25, pm10);
