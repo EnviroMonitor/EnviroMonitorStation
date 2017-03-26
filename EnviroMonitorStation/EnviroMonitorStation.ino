@@ -63,8 +63,8 @@ void setup() {
     delay(5000);
   }
 
-  strcpy(apiEndpoint, custom_apiEndpoint.getValue(), 130);
-  strcpy(token, custom_token.getValue(), 130);
+  strcpy(apiEndpoint, custom_apiEndpoint.getValue());
+  strcpy(token, custom_token.getValue());
 
   Serial.println("Successfully connected to WiFi network");
 
