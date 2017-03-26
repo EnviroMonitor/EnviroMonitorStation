@@ -25,15 +25,6 @@
 #define DEBUG_MODE    true
 #define TIME_BETWEEN_METERINGS 2000
 
-//# Wemos PIN definitions
-#define PMS_SET
-#define PMS_RST
-#define PMS_RXD
-#define PMS_TXD
-#define PMS_SET
-#define PMS_SET
-#define HEAT_PIN_SWITCH D4
-
 #define HEAT_PIN_SWITCH D4
 #define TARGET_TEMP 30.0
 
