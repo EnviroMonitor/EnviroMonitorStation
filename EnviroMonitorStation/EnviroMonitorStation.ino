@@ -38,7 +38,7 @@
 #define TARGET_TEMP 30.0
 
 char apiEndpoint[130] = "http://app.smogly.pl/api/v1/metering/";
-char token[130] = "9539f7d1-d633-4838-81cb-6f8c712c6ad0";
+char token[130] = "";
 
 SmoglyDHT dht;
 PMS3003 pms;
@@ -72,6 +72,9 @@ void setup() {
     ESP.reset();
     delay(5000);
   }
+
+  strcpy(apiEndpoint, custom_apiEndpoint.getValue(), 130);
+  strcpy(token, custom_token.getValue(), 130);
 
   Serial.println("Successfully connected to WiFi network");
 
