@@ -46,7 +46,6 @@ void setup() {
   }
 
   pinMode(HEAT_PIN_SWITCH, OUTPUT);
-  digitalWrite(HEAT_PIN_SWITCH, HIGH);
 
   config.read("/config.json");
 
