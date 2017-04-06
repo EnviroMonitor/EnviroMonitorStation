@@ -98,7 +98,7 @@ void loop() {
 
     float temp_out1 = BME.humidity;
     float hum_out1 = BME.temperature;
-    float bpress_out1 = BMESensor.pressure  / 100.0F;
+    float bpress_out1 = BME.pressure  / 100.0F;
 
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t)) {
