@@ -21,6 +21,9 @@
 #include "SmoglyDHT.h"
 #include "PMS3003.h"
 
+#include <Wire.h>
+#include <BME280_t.h>
+
 //set debug mode, use only in testing
 #define DEBUG_MODE    true
 #define TIME_BETWEEN_METERINGS 2000
@@ -33,6 +36,7 @@ char token[130] = "";
 
 SmoglyDHT dht;
 PMS3003 pms;
+BME280<> BME;
 
 void setup() {
   Serial.begin(115200);
@@ -46,6 +50,8 @@ void setup() {
   }
 
   pinMode(HEAT_PIN_SWITCH, OUTPUT);
+
+  BME.begin();
 
   config.read("/config.json");
 
@@ -90,6 +96,10 @@ void loop() {
     long pm25 = pms.pm25;
     long pm10 = pms.pm10;
 
+    float temp_out1 = BME.humidity;
+    float hum_out1 = BME.temperature;
+    float bpress_out1 = BMESensor.pressure  / 100.0F;
+
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t)) {
       Serial.println("Failed to read from DHT sensor!");
@@ -107,7 +117,7 @@ void loop() {
       Serial.print("\tHeater ON\n");
     }
 
-    String output = createPayload(h,t, pm25, pm10);
+    String output = createPayload(h,t, pm25, pm10, temp_out1, hum_out1, bpress_out1);
     HTTPClient http;
     http.begin(apiEndpoint);
     http.addHeader("Content-Type", "application/json");
@@ -117,7 +127,7 @@ void loop() {
     delay(TIME_BETWEEN_METERINGS);
 }
 
-String createPayload(float h, float t, long pm25, long pm10)
+String createPayload(float h, float t, long pm25, long pm10, float temp_out1, float hum_out1, float bpress_out1)
 {
   StaticJsonBuffer<300> jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
@@ -125,15 +135,15 @@ String createPayload(float h, float t, long pm25, long pm10)
   root["pm25"] = pm25;
   root["pm10"] = pm10;
   root["temp_out1"] = t;
-  root["temp_out2"] = 0;
+  root["temp_out2"] = temp_out1;
   root["temp_out3"] = 0;
-  root["temp_int_air1"] = 0;
-  root["hum_out1"] = h;
+  root["temp_int_air1"] = t;
+  root["hum_out1"] = hum_out1;
   root["hum_out2"] = 0;
   root["hum_out3"] = 0;
-  root["hum_int_air1"] = 0;
+  root["hum_int_air1"] = h;
   root["rssi"] = 0;
-  root["bpress_out1"] = 0;
+  root["bpress_out1"] = bpress_out1;
   root["hw_id"] = "0";
   root["token"] = token;
   String output;
